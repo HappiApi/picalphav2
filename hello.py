@@ -6,10 +6,80 @@ app = Flask(__name__)
 def valid_pic(code):
     return True
 
+def convert_year(year):
+    return year_dict[year]
+
+year_dict = {'2005':'two_thousand_five','2006':'two_thousand_six','2007':'two_thousand_seven','2008':'two_thousand_eight'
+            , '2009':'two_thousand_nine','2010':'two_thousand_ten','2011':'two_thousand_eleven','2012':'two_thousand_twelve'
+            , '2013':'two_thousand_thirteen', '2014' :'two_thousand_fourteen'}
+
 independentSchoolLabel = 'Independent'
 stateSchoolLabel = 'State'
 specialSchoolLabel = 'Special'
 mainstreamSchoolLabel = 'Mainstream'
+
+schoolTypeDict = {
+                    'IND': independentSchoolLabel,
+                    'INDSS': independentSchoolLabel,
+                    'NMSS' : independentSchoolLabel,
+                    'VA': stateSchoolLabel,
+                    'VC': stateSchoolLabel,
+                    'AC': stateSchoolLabel,
+                    'CTC': stateSchoolLabel,
+                    'CY': stateSchoolLabel,
+                    'CYS': stateSchoolLabel,
+                    'FD': stateSchoolLabel,
+                    'FDS': stateSchoolLabel,
+                    'INDSPEC':independentSchoolLabel,
+                    'ACC':stateSchoolLabel,
+                    'ACF':stateSchoolLabel,
+                    'ACS':stateSchoolLabel,
+                    'ACCS':stateSchoolLabel,
+                    'FS':stateSchoolLabel,
+                    'FSS':stateSchoolLabel,
+                    'FUTC':stateSchoolLabel,
+                    'CHS':stateSchoolLabel,
+                    'FHS':stateSchoolLabel,
+                    'PRU':stateSchoolLabel,
+                    'INDSP':independentSchoolLabel,
+                    'FAP':stateSchoolLabel,
+                    'ACCAP':stateSchoolLabel,
+                    'ACAP':stateSchoolLabel,
+                    'AP':stateSchoolLabel,
+                    'F':stateSchoolLabel
+                 }
+
+schoolTypeSpecificDict = {
+                            'AC':'Academy Sponsor Led',
+                            'CY':'Community School',
+                            'VA':'Voluntary Aided School',
+                            'VC ':'Voluntary Controlled School',
+                            'FD':'Foundation School',
+                            'CTC':'City Technology College',
+                            'CYS':'Community Special School',
+                            'FDS':'Foundation Special School',
+                            'NMSS':'Non-maintained Special School',
+                            'INDSS':'Independent Special School',
+                            'IND':'Independent School',
+                            'CHS':'Community Hospital School',
+                            'FHS':'Foundation Hospital School',
+                            'PRU':'Pupil Referral Unit',
+                            'INDSP':'Independent Special School',
+                            'ACS':'Academy Special',
+                            'ACC':'Academy Converter',
+                            'F':'Free School - Mainstream',
+                            'FS':'Special Free Schools',
+                            'ACCS':'Converter special academies',
+                            'FAP':'Free School AP',
+                            'FUTC':'Free School UTC (University Technical College)',
+                            'FSS':'Free School - Studio School',
+                            'ACCAP':'Academy - Converter Alternative Provision (AP)',
+                            'ACAP':'Academy - Sponsor med Alternative Provision (AP)',
+                            'AP':'Alternative Provision',
+                            'INDSPEC':'Independent school catering wholly or mainly for children with statutory statements of special educational needs.',
+                            'ACF':'Academy Free School'
+                         }
+
 
 schoolTypeDictTwoNine = {
                             'IND': independentSchoolLabel,
@@ -26,7 +96,7 @@ schoolTypeDictTwoNine = {
                         }
 
 
-schoolTypeDictTwoNine = {
+schoolTypeDictTwoNineS = {
                             'IND': mainstreamSchoolLabel,
                             'INDSS': specialSchoolLabel,
                             'NMSS' : specialSchoolLabel,
@@ -46,10 +116,31 @@ def hello():
 
 @app.route('/schools')
 def schools():
-    # parse query parameter
-    pic_code = request.args.get('pic_code')
-    test = request.args.get('test')
-    return pic_code + test
+    name = request.args.get('name')
+    year = request.args.get('year')
+    year = convert_year(year)
+    cursor = conn.cursor()
+
+    table_string_formatting = "SELECT school_type FROM " + year #SQL Injection
+    cursor.execute(table_string_formatting + ' WHERE school_name = %s', (name,))
+    data = cursor.fetchone()
+    if data:
+        try:
+            return jsonify(
+                    school_name=name,
+                    school_type=schoolTypeDict[data[0]],
+                    specific_type=schoolTypeSpecificDict[data[0]],
+                    special_school='NO'
+                    )
+        except:
+            return "BEEEP SOMETHING WENT WRONG"
+    else:
+        return "Invalid School Reference"
+
+    # # parse query parameter
+    # pic_code = request.args.get('pic_code')
+    # test = request.args.get('test')
+    # return pic_code + test
     # if valid_pic(pic_code):
     #     cursor = conn.cursor()
     #     cursor.execute('SELECT name, type, admission FROM schools WHERE pic_code={0};'.format(pic_code))
