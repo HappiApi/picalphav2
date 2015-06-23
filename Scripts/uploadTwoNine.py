@@ -8,8 +8,11 @@ from connectDB  import *
 
 # new_names = []
 
-# def pluck(props, row):
-#     return [row[prop] for prop in props ]
+def pluck_all(props, reader):
+    map(lambda row: pluck(props, row), reader)
+
+def pluck(props, row):
+    return [row[prop] for prop in props ]
 
 # Upload 2009.csv data
 
