@@ -53,6 +53,11 @@ schoolTypeSpecificDict = {
     'ACF':'Academy Free School'
 }
 
+def schoolType(school_tag):
+    if school_tag in independent:
+        return independentSchoolLabel
+    else:
+        return stateSchoolLabel
 
 @app.route('/')
 def hello():
@@ -72,9 +77,9 @@ def schools():
         try:
             return jsonify(
                     school_name=name,
-                    school_type=schoolTypeDict[data[0]],
+                    school_type= schoolType(data[0]),
                     specific_type=schoolTypeSpecificDict[data[0]],
-                    special_school='NO'
+                    special_school= data[0] in special
                     )
         except:
             return "BEEEP SOMETHING WENT WRONG"

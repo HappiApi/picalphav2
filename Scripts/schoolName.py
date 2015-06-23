@@ -38,6 +38,22 @@ def find_columnName(file_reader,schoolName_columnNames):
 				
 			print "School Column is not named " + schoolName_columnName
 
+def validated_table_name(table_name,cursor_obj):
+    cursor_obj.execute("SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' and table_name=%s LIMIT 1;",(table_name,))
+    name_exist = cursor_obj.fetchone()
+    # print name_exist
+    if name_exist:
+        return table_name
+    else:
+        print "Invalid Table Name"
+        raise SystemExit
+
+def pluck_all(props, reader):
+    return map(lambda row: pluck(props, row), reader)
+
+def pluck(props, row):
+    return [row[prop] for prop in props]
+
 # For each new name check if already exist, if not print them
 def doesntExist(new_names,existing_names):
 	dE = []
