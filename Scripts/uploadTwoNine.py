@@ -9,10 +9,10 @@ from connectDB  import *
 # new_names = []
 
 def pluck_all(props, reader):
-    map(lambda row: pluck(props, row), reader)
+    return map(lambda row: pluck(props, row), reader)
 
 def pluck(props, row):
-    return [row[prop] for prop in props ]
+    return [row[prop] for prop in props]
 
 # Upload 2009.csv data
 
@@ -27,16 +27,16 @@ def pluck(props, row):
 #             	VALUES (%s, %s);""",
 #             	(value['institution name'],value['institution type']))
 
-with open('../2010.csv','rb') as twoNine:
-	twoNineReader = csv.DictReader(twoNine)
-	# values = map(lambda x: pluck(['LA number', 'institution name', 'institution type'], x), twoNineReader)
-	for value in twoNineReader:
-		if value['SchoolName'] != "":
-			print(value['LACode'],value['SchoolName'])
-			cursor.execute(
-            	"""INSERT INTO twothousandandnine (school_name,school_type)
-            	VALUES (%s, %s);""",
-            	(value['SchoolName'],value['SchoolType']))
+# with open('../2010.csv','rb') as twoNine:
+# 	twoNineReader = csv.DictReader(twoNine)
+# 	# values = map(lambda x: pluck(['LA number', 'institution name', 'institution type'], x), twoNineReader)
+# 	for value in twoNineReader:
+# 		if value['SchoolName'] != "":
+# 			print(value['LACode'],value['SchoolName'])
+# 			cursor.execute(
+#             	"""INSERT INTO twothousandandnine (school_name,school_type)
+#             	VALUES (%s, %s);""",
+#             	(value['SchoolName'],value['SchoolType']))
 
 # with open('2010.csv','rb') as twoTen:
 # 	twoTenReader = csv.DictReader(twoTen)
