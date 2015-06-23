@@ -70,7 +70,7 @@ def schools():
     year = convert_year(year)
     cursor = conn.cursor()
 
-    table_string_formatting = "SELECT school_type FROM " + year #SQL Injection
+    table_string_formatting = "SELECT school_type,admissions FROM " + year #SQL Injection
     cursor.execute(table_string_formatting + ' WHERE school_name = %s', (name,))
     data = cursor.fetchone()
     if data:
@@ -79,7 +79,8 @@ def schools():
                     school_name=name,
                     school_type= schoolType(data[0]),
                     specific_type=schoolTypeSpecificDict[data[0]],
-                    special_school= data[0] in special
+                    special_school= data[0] in special,
+                    admissions= data[1]
                     )
         except:
             return "BEEEP SOMETHING WENT WRONG"
